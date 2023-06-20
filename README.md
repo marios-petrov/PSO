@@ -22,5 +22,22 @@ The project is implemented in Python and uses numpy for handling arrays and tqdm
 -PSO: This class implements the Particle Swarm Optimization algorithm. It maintains a swarm of particles and implements the logic for updating the swarm over a number of iterations.
 
 -PSO.run: This method runs the PSO algorithm for a given number of iterations. It returns the global best position found by the algorithm.
-    
+
+# Code Explanation
+
+-Particle: Each particle represents a potential solution. It has a current position, a current velocity, and it keeps track of its best position encountered so far along with the score at that position.
+
+-PSO: The PSO class represents the swarm. It initializes the particles, maintains the global best position and score, and contains the main loop that runs the optimization process.
+
+-Particle.init: This method initializes a particle with a random position and velocity within the given bounds.
+
+-PSO.init: This method initializes the PSO algorithm. It creates a list of particles and sets the initial global best position and score.
+
+-PSO.run: This method runs the PSO algorithm. For each iteration, it updates each particle's velocity and position, and the global best position and score if necessary. It also linearly decreases the inertia weight over the iteration
+
+# License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+
 
