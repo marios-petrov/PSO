@@ -44,6 +44,7 @@ class PSO:
                 elif new_position > self.ub:
                     new_position = self.ub
 
-                particle.position = new_position
+                particle.position = int(new_position)
                 particle.velocity = new_velocity
         return self.global_best_position
+
