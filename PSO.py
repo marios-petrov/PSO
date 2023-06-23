@@ -4,10 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 
-
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
-
 
 def PSO(X, y, n_particles, n_iterations, w_max, w_min, c1, c2):
     dim = X.shape[1]
