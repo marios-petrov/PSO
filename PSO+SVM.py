@@ -6,7 +6,7 @@ from tqdm import tqdm
 import pso_svm  # make sure pso_svm.py is in the same directory
 
 # Features and Labels Path
-data_dir = "C:/Users/shado/PycharmProjects/BCIResearch/featuresAndLabelsdb10lvl4_0.2s"
+data_dir = "SAMPLE"
 
 # Get the list of all .npy files in the directory
 file_list = [f for f in os.listdir(data_dir) if f.endswith('.npy')]
