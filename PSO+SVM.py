@@ -3,10 +3,10 @@ import os
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-import PSO 
+import pso_svm  # make sure pso_svm.py is in the same directory
 
 # Features and Labels Path
-data_dir = "SAMPLE"
+data_dir = "C:/Users/shado/PycharmProjects/BCIResearch/featuresAndLabelsdb10lvl4_0.2s"
 
 # Get the list of all .npy files in the directory
 file_list = [f for f in os.listdir(data_dir) if f.endswith('.npy')]
@@ -15,8 +15,8 @@ file_list = [f for f in os.listdir(data_dir) if f.endswith('.npy')]
 patient_ids = set([f.split('_')[1].split('.')[0] for f in file_list])
 
 # Parameters for the PSO
-n_particles = 100
-n_iterations = 50
+n_particles = 50
+n_iterations = 100
 w_max = 1
 w_min = 0.2
 c1 = 1
@@ -25,11 +25,6 @@ c2 = 1
 # Store best accuracies and corresponding subject IDs
 best_accuracies = []
 subject_ids = []
-
-# Store best-performing feature filters and corresponding indices
-best_feature_filters = []
-kept_feature_indices = []
-removed_feature_indices = []
 
 # Counter for skipped iterations
 skipped_iterations = 0
@@ -57,14 +52,14 @@ for patient_id in tqdm(patient_ids):
 
     print(f"Best accuracy for {patient_id}: {best_score}")
 
-    # Append data to lists
+    # Append to lists
     best_accuracies.append(best_score)
     subject_ids.append(patient_id)
 
-    # Save best performing feature filter and corresponding indices
-    best_feature_filters.append(best_mask)
-    kept_feature_indices.append(np.where(best_mask)[0])
-    removed_feature_indices.append(np.where(~best_mask)[0])
+    # Save best performing feature filter and corresponding indices for each subject
+    np.save(f'best_feature_filter_{patient_id}.npy', best_mask)
+    np.save(f'kept_feature_indices_{patient_id}.npy', np.where(best_mask)[0])
+    np.save(f'removed_feature_indices_{patient_id}.npy', np.where(~best_mask)[0])
 
 average_accuracy = np.mean(best_accuracies)
 print(f"Average accuracy: {average_accuracy}")
@@ -81,16 +76,13 @@ plt.title('SVM Classifier Accuracies per Subject')
 plt.savefig('svm_accuracies.png')  # Save the plot
 plt.show()
 
-# Save the best performing feature filters and the corresponding indices 
-np.save('best_feature_filters.npy', best_feature_filters)
-np.save('kept_feature_indices.npy', kept_feature_indices)
-np.save('removed_feature_indices.npy', removed_feature_indices)
-
 # Write parameters, skipped iterations, and best filter performances to a text file
 with open('pso_svm_info.txt', 'w') as f:
-    f.write(f'Number of skipped iterations: {skipped_iterations}\n')
     f.write(f'PSO parameters: n_particles={n_particles}, n_iterations={n_iterations}, w_max={w_max}, w_min={w_min}, c1={c1}, c2={c2}\n')
-    for id, acc, kept, removed in zip(subject_ids, best_accuracies, kept_feature_indices, removed_feature_indices):
+    f.write(f'Number of skipped iterations: {skipped_iterations}\n')
+    for id, acc in zip(subject_ids, best_accuracies):
+        kept = np.load(f'kept_feature_indices_{id}.npy')
+        removed = np.load(f'removed_feature_indices_{id}.npy')
         percent_kept = len(kept) / (len(kept) + len(removed)) * 100
         print(f'Subject ID: {id}, Accuracy: {acc}, Percent of features kept: {percent_kept}%')
         f.write(f'Subject ID: {id}, Accuracy: {acc}, Percent of features kept: {percent_kept}%, Kept features: {len(kept)}, Removed features: {len(removed)}\n')
